@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
-import { FaGithub, FaPlus, FaSpinner } from "react-icons/fa";
-import { Container, Form, SubmitButton } from "./styles";
+import { FaBars, FaGithub, FaPlus, FaSpinner } from "react-icons/fa";
+import { Container, Form, List, SubmitButton } from "./styles";
 
 import api from "../../services/api";
 
@@ -33,6 +33,8 @@ export default function Main() {
       }
 
       submit();
+
+      console.log(repos);
     },
     [newRepo, repos]
   );
@@ -63,6 +65,16 @@ export default function Main() {
           )}
         </SubmitButton>
       </Form>
+      <List>
+        {repos.map((repo) => (
+          <li key={repo.name}>
+            <span>{repo.name}</span>
+            <a href="">
+              <FaBars size={20} />
+            </a>
+          </li>
+        ))}
+      </List>
     </Container>
   );
 }
