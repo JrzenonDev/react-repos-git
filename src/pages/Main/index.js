@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { FaBars, FaGithub, FaPlus, FaSpinner, FaTrash } from "react-icons/fa";
 import { Container, DeleteButton, Form, List, SubmitButton } from "./styles";
 
@@ -9,6 +9,20 @@ export default function Main() {
   const [repos, setRepos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState(null);
+
+  useEffect(() => {
+    let reposStorage = localStorage.getItem("repos");
+
+    if (reposStorage) {
+      setRepos(JSON.parse(reposStorage));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (repos.length > 0) {
+      localStorage.setItem("repos", JSON.stringify(repos));
+    }
+  }, [repos]);
 
   const handleSubmit = useCallback(
     (e) => {
@@ -96,7 +110,7 @@ export default function Main() {
               {repo.name}
             </span>
 
-            <a href="">
+            <a href="repos.name">
               <FaBars size={20} />
             </a>
           </li>
