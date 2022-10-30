@@ -9,6 +9,7 @@ import {
   Loading,
   Owner,
   PageActions,
+  StateRepo,
 } from "./styles";
 
 export default function Repositorio() {
@@ -18,6 +19,12 @@ export default function Repositorio() {
   const [issues, setIssues] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
+  const [filters, setFilters] = useState([
+    { state: "all", label: "Todas", active: true },
+    { state: "open", label: "Aberta", active: false },
+    { state: "closed", label: "Fechada", active: false },
+  ]);
+  const [filterIndex, setFilterIndex] = useState(0);
 
   useEffect(() => {
     async function load() {
@@ -27,7 +34,7 @@ export default function Repositorio() {
         api.get(`/repos/${nameRepo}`),
         api.get(`/repos/${nameRepo}/issues`, {
           params: {
-            state: "open",
+            state: filters.find((f) => (f.active = filters)).state,
             per_page: 5,
           },
         }),
@@ -39,7 +46,7 @@ export default function Repositorio() {
     }
 
     load();
-  }, [repositorio]);
+  }, [repositorio, filters]);
 
   useEffect(() => {
     async function loadIssue() {
@@ -47,22 +54,24 @@ export default function Repositorio() {
 
       const response = await api.get(`/repos/${nameRepo}/issues`, {
         params: {
-          state: "open",
+          state: filters.find((f) => (f.active = filters)).state,
           page: page,
           per_page: 5,
         },
       });
 
       setIssues(response.data);
-      console.log("repositorio", repositorio);
-      console.log("response", response);
     }
 
     loadIssue();
-  }, [repositorio, page]);
+  }, [repositorio, page, filterIndex, filters]);
 
   function handlePage(action) {
     setPage(action === "back" ? page - 1 : page + 1);
+  }
+
+  function handleFilter(index) {
+    setFilterIndex(index);
   }
 
   if (loading) {
@@ -85,6 +94,21 @@ export default function Repositorio() {
         <p>{repo.description}</p>
       </Owner>
 
+      <StateRepo active={filterIndex}>
+        <h1>Estado da Issues</h1>
+        <div>
+          {filters.map((filter, index) => (
+            <button
+              type="button"
+              onClick={() => handleFilter(index)}
+              key={filter.label}
+            >
+              {filter.label}
+            </button>
+          ))}
+        </div>
+      </StateRepo>
+
       <IssuesList>
         {issues.map((issue) => (
           <li key={String(issue.id)}>
@@ -99,7 +123,6 @@ export default function Repositorio() {
                   <span key={String(label.id)}>{label.name}</span>
                 ))}
               </strong>
-
               <p>{issue.user.login}</p>
             </div>
           </li>

@@ -127,3 +127,25 @@ export const PageActions = styled.div`
     }
   }
 `;
+
+export const StateRepo = styled.div`
+  h1 {
+    font-size: 30px;
+    color: #0d2636;
+  }
+
+  button {
+    background: #0d2636;
+    color: #fff;
+    outline: 0;
+    border: 0;
+    padding: 10px 40px;
+    border-radius: 4px;
+    margin: 0 3px;
+
+    &:nth-child(${(props) => props.active + 1}) {
+      background: #0071db;
+      color: #fff;
+    }
+  }
+`;
